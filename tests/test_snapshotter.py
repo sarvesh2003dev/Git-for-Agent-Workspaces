@@ -106,6 +106,19 @@ class SnapshotterTests(unittest.TestCase):
             WorkspaceSnapshotter(str(self.workspace), str(legacy))
         self.assertEqual(old.read_text(), "{}")
 
+    @unittest.skipUnless(os.name == "nt", "Windows path aliases are unavailable")
+    def test_equivalent_windows_path_spelling_reopens_same_store(self):
+        (self.workspace / "a").write_bytes(b"original")
+        sid = self.snap.create_snapshot()
+        other = WorkspaceSnapshotter(str(self.workspace).upper(), str(self.snap.snapshot_dir).upper())
+        self.assertTrue(other.verify_snapshot(sid)["valid"])
+        import ctypes
+        buffer = ctypes.create_unicode_buffer(32768)
+        length = ctypes.windll.kernel32.GetShortPathNameW(str(self.workspace), buffer, len(buffer))
+        if length and length < len(buffer):
+            alias = WorkspaceSnapshotter(buffer.value)
+            self.assertTrue(alias.verify_snapshot(sid)["valid"])
+
     @unittest.skipIf(os.name == "nt", "POSIX directory permissions are unavailable")
     def test_readonly_directories_can_be_replaced_and_cleaned_up(self):
         directory = self.workspace / "readonly"

@@ -1,4 +1,4 @@
-# Observed validation — 2026-10-03
+# Observed validation â€” 2026-10-03
 
 These are reproducible local observations, not a cloud-service comparison or an
 under-50-ms guarantee. The Windows and Linux benchmark invocations ran sequentially
@@ -6,12 +6,14 @@ on one host. Neither run controlled other host activity or flushed OS caches.
 
 ## Correctness
 
-- Windows 11 / CPython 3.13.2: 40 tests, 37 passed, 3 POSIX-only skips.
-- Ubuntu on WSL2 / CPython 3.14.4: all 40 tests passed.
+- Windows 11 / CPython 3.13.2: 41 tests, 38 passed, 3 POSIX-only skips.
+- Ubuntu on WSL2 / CPython 3.14.4: 41 tests, 40 passed, 1 Windows-only skip.
 - Tests create their data in temporary directories (NTFS on Windows, tmpfs on WSL).
 - Tests cover actual process death between directory renames, multi-process
   checkpoint publication, corrupted/missing objects, symlink escapes, metadata,
   read-only directories, retention, and command exit codes.
+- The Windows CI runner exposed equivalent short/full path spellings; a regression
+  test now verifies canonical store identity for Windows path aliases.
 - The demo independently verifies the restored fixture and reruns its checks.
 - A Python wheel builds successfully. The CI configuration also targets Python
   3.10 and 3.13 on GitHub-hosted Linux and Windows; the local runs above do not
@@ -42,7 +44,7 @@ performance. Do not use the difference between rows as a Windows/Linux compariso
 Five samples are insufficient to characterize production tail latency.
 
 Raw samples and context:
-[Windows](results/windows-ntfs.json) · [Linux](results/linux-wsl-tmpfs.json).
+[Windows](results/windows-ntfs.json) Â· [Linux](results/linux-wsl-tmpfs.json).
 The Windows temporary-directory username is redacted; measurement values are not.
 
 ## Reproduce
