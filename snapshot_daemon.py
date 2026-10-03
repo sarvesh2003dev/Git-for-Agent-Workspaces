@@ -103,6 +103,13 @@ class WorkspaceSnapshotter:
         self._thread_lock = threading.RLock()
         self._depth = 0
         try:
+            # Reject links before canonicalization so resolve() cannot conceal
+            # an unsupported ancestor. Then normalize Windows short names and
+            # path spelling so equivalent clients share the same store identity.
+            self._check_locations()
+            self.workspace = self.workspace.resolve()
+            self.snapshot_dir = (self.snapshot_dir.resolve() if snapshot_dir is not None
+                                 else Path(str(self.workspace) + ".snapshots"))
             self._check_locations()
             if not self.workspace.exists() and not (self.snapshot_dir / "rollback.json").is_file():
                 raise SnapshotError(f"Workspace directory does not exist: {self.workspace}")
