@@ -1,26 +1,16 @@
-```
-# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Dependencies
-venv/
+*.py[cod]
 .venv/
+venv/
 .env
-.env.local
-*.env.*
-
-# Logs and temp files
-*.log
-*.tmp
-
-# Editors
+.env.*
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.coverage
+workspace/
+*.snapshots/
+benchmark-results*.json
 .vscode/
 .idea/
-```node_modules/
-.next/
-dist/
-build/
-node_modules/

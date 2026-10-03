@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "description": "Verified local filesystem microbenchmark; no VM or Dedalus measurements",
+  "context": {
+    "python": "3.13.2 (tags/v3.13.2:4f8bb39, Feb  4 2025, 15:23:48) [MSC v.1942 64 bit (AMD64)]",
+    "os": "Windows-11-10.0.26300-SP0",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 141 Stepping 1, GenuineIntel",
+    "logical_cpu_count": 12,
+    "filesystem": "NTFS",
+    "temporary_parent": "<Windows user temporary directory>",
+    "device_id": 5935374956160347715,
+    "volume_total_bytes": 482538229760,
+    "volume_free_bytes": 239715528704
+  },
+  "workload": {
+    "seed": 42,
+    "file_count": 100,
+    "file_size_bytes": 4096,
+    "total_file_bytes": 409600,
+    "directory_count": 11,
+    "iterations_per_backend": 5,
+    "mutations_per_sample": {
+      "files_edited": 25,
+      "files_deleted": 25,
+      "files_added": 26,
+      "directories_added": 1,
+      "directories_replaced_by_files": 1
+    }
+  },
+  "methodology": [
+    "Both backends receive the same deterministic fixture and mutations; order alternates.",
+    "All retained snapshots contain the same baseline; the content store can deduplicate them.",
+    "The first content-store snapshot starts with an empty store; later samples reuse it.",
+    "OS caches are not flushed; these are local observed timings, not cold-cache guarantees.",
+    "Snapshot and rollback timers include each backend's normal integrity and durability work.",
+    "The full-copy baseline uses copytree/copy2, without extra integrity hashing or explicit fsync.",
+    "Independent correctness checks and mutation setup are outside timing intervals.",
+    "Verification compares every relative path, file bytes, mode, and mtime_ns, including empty directories.",
+    "Percentiles use linear interpolation; few samples do not establish tail-latency guarantees.",
+    "Storage reports logical file sizes, not allocated disk blocks; all samples are retained.",
+    "This measures regular files/directories, not symlinks, concurrent writers, VMs, or external effects."
+  ],
+  "results": {
+    "content_store": {
+      "raw_samples": [
+        {
+          "iteration": 1,
+          "measurement_order": 1,
+          "snapshot_ms": 196.4455,
+          "rollback_ms": 241.3619,
+          "snapshot_plus_rollback_ms": 437.80740000000003,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 2,
+          "measurement_order": 2,
+          "snapshot_ms": 227.4352,
+          "rollback_ms": 243.2281,
+          "snapshot_plus_rollback_ms": 470.66330000000005,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 3,
+          "measurement_order": 1,
+          "snapshot_ms": 244.5033,
+          "rollback_ms": 252.2116,
+          "snapshot_plus_rollback_ms": 496.7149,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 4,
+          "measurement_order": 2,
+          "snapshot_ms": 228.5058,
+          "rollback_ms": 243.3304,
+          "snapshot_plus_rollback_ms": 471.83619999999996,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 5,
+          "measurement_order": 1,
+          "snapshot_ms": 237.7346,
+          "rollback_ms": 242.2016,
+          "snapshot_plus_rollback_ms": 479.9362,
+          "restoration_verified": true
+        }
+      ],
+      "snapshot_ms": {
+        "p50": 228.5058,
+        "p95": 243.14956,
+        "min": 196.4455,
+        "max": 244.5033
+      },
+      "rollback_ms": {
+        "p50": 243.2281,
+        "p95": 250.43536,
+        "min": 241.3619,
+        "max": 252.2116
+      },
+      "snapshot_plus_rollback_ms": {
+        "p50": 471.83619999999996,
+        "p95": 493.35916,
+        "min": 437.80740000000003,
+        "max": 496.7149
+      },
+      "storage": {
+        "snapshot_count": 5,
+        "blob_count": 100,
+        "blob_bytes": 409600,
+        "referenced_blob_count": 100,
+        "unreferenced_blob_count": 0,
+        "logical_file_bytes": 527973
+      }
+    },
+    "full_copy": {
+      "raw_samples": [
+        {
+          "iteration": 1,
+          "measurement_order": 2,
+          "snapshot_ms": 62.4193,
+          "rollback_ms": 63.8815,
+          "snapshot_plus_rollback_ms": 126.30080000000001,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 2,
+          "measurement_order": 1,
+          "snapshot_ms": 62.4214,
+          "rollback_ms": 60.3729,
+          "snapshot_plus_rollback_ms": 122.79429999999999,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 3,
+          "measurement_order": 2,
+          "snapshot_ms": 52.6163,
+          "rollback_ms": 61.4043,
+          "snapshot_plus_rollback_ms": 114.0206,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 4,
+          "measurement_order": 1,
+          "snapshot_ms": 51.8751,
+          "rollback_ms": 60.2775,
+          "snapshot_plus_rollback_ms": 112.1526,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 5,
+          "measurement_order": 2,
+          "snapshot_ms": 51.8291,
+          "rollback_ms": 61.6535,
+          "snapshot_plus_rollback_ms": 113.48259999999999,
+          "restoration_verified": true
+        }
+      ],
+      "snapshot_ms": {
+        "p50": 52.6163,
+        "p95": 62.42098,
+        "min": 51.8291,
+        "max": 62.4214
+      },
+      "rollback_ms": {
+        "p50": 61.4043,
+        "p95": 63.435900000000004,
+        "min": 60.2775,
+        "max": 63.8815
+      },
+      "snapshot_plus_rollback_ms": {
+        "p50": 114.0206,
+        "p95": 125.5995,
+        "min": 112.1526,
+        "max": 126.30080000000001
+      },
+      "storage": {
+        "snapshot_count": 5,
+        "logical_file_bytes": 2048000
+      }
+    }
+  },
+  "all_restorations_verified": true
+}

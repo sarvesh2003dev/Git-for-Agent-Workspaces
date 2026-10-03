@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "description": "Verified local filesystem microbenchmark; no VM or Dedalus measurements",
+  "context": {
+    "python": "3.14.4 (main, Apr  8 2026, 04:02:31) [GCC 15.2.0]",
+    "os": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+    "machine": "x86_64",
+    "processor": "unknown",
+    "logical_cpu_count": 12,
+    "filesystem": "tmpfs",
+    "temporary_parent": "/tmp",
+    "device_id": 72,
+    "volume_total_bytes": 4026867712,
+    "volume_free_bytes": 4023459840
+  },
+  "workload": {
+    "seed": 42,
+    "file_count": 100,
+    "file_size_bytes": 4096,
+    "total_file_bytes": 409600,
+    "directory_count": 11,
+    "iterations_per_backend": 5,
+    "mutations_per_sample": {
+      "files_edited": 25,
+      "files_deleted": 25,
+      "files_added": 26,
+      "directories_added": 1,
+      "directories_replaced_by_files": 1
+    }
+  },
+  "methodology": [
+    "Both backends receive the same deterministic fixture and mutations; order alternates.",
+    "All retained snapshots contain the same baseline; the content store can deduplicate them.",
+    "The first content-store snapshot starts with an empty store; later samples reuse it.",
+    "OS caches are not flushed; these are local observed timings, not cold-cache guarantees.",
+    "Snapshot and rollback timers include each backend's normal integrity and durability work.",
+    "The full-copy baseline uses copytree/copy2, without extra integrity hashing or explicit fsync.",
+    "Independent correctness checks and mutation setup are outside timing intervals.",
+    "Verification compares every relative path, file bytes, mode, and mtime_ns, including empty directories.",
+    "Percentiles use linear interpolation; few samples do not establish tail-latency guarantees.",
+    "Storage reports logical file sizes, not allocated disk blocks; all samples are retained.",
+    "This measures regular files/directories, not symlinks, concurrent writers, VMs, or external effects."
+  ],
+  "results": {
+    "content_store": {
+      "raw_samples": [
+        {
+          "iteration": 1,
+          "measurement_order": 1,
+          "snapshot_ms": 14.002097,
+          "rollback_ms": 11.010268,
+          "snapshot_plus_rollback_ms": 25.012365,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 2,
+          "measurement_order": 2,
+          "snapshot_ms": 20.227841,
+          "rollback_ms": 13.457981,
+          "snapshot_plus_rollback_ms": 33.685822,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 3,
+          "measurement_order": 1,
+          "snapshot_ms": 16.881722,
+          "rollback_ms": 10.396713,
+          "snapshot_plus_rollback_ms": 27.278435,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 4,
+          "measurement_order": 2,
+          "snapshot_ms": 18.622814,
+          "rollback_ms": 12.68471,
+          "snapshot_plus_rollback_ms": 31.307524,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 5,
+          "measurement_order": 1,
+          "snapshot_ms": 19.326257,
+          "rollback_ms": 14.822167,
+          "snapshot_plus_rollback_ms": 34.148424,
+          "restoration_verified": true
+        }
+      ],
+      "snapshot_ms": {
+        "p50": 18.622814,
+        "p95": 20.0475242,
+        "min": 14.002097,
+        "max": 20.227841
+      },
+      "rollback_ms": {
+        "p50": 12.68471,
+        "p95": 14.5493298,
+        "min": 10.396713,
+        "max": 14.822167
+      },
+      "snapshot_plus_rollback_ms": {
+        "p50": 31.307524,
+        "p95": 34.0559036,
+        "min": 25.012365,
+        "max": 34.148424
+      },
+      "storage": {
+        "snapshot_count": 5,
+        "blob_count": 100,
+        "blob_bytes": 409600,
+        "referenced_blob_count": 100,
+        "unreferenced_blob_count": 0,
+        "logical_file_bytes": 527938
+      }
+    },
+    "full_copy": {
+      "raw_samples": [
+        {
+          "iteration": 1,
+          "measurement_order": 2,
+          "snapshot_ms": 3.269144,
+          "rollback_ms": 3.516266,
+          "snapshot_plus_rollback_ms": 6.78541,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 2,
+          "measurement_order": 1,
+          "snapshot_ms": 3.820358,
+          "rollback_ms": 3.94961,
+          "snapshot_plus_rollback_ms": 7.769968,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 3,
+          "measurement_order": 2,
+          "snapshot_ms": 3.462192,
+          "rollback_ms": 4.017596,
+          "snapshot_plus_rollback_ms": 7.479788,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 4,
+          "measurement_order": 1,
+          "snapshot_ms": 3.892526,
+          "rollback_ms": 5.537553,
+          "snapshot_plus_rollback_ms": 9.430079,
+          "restoration_verified": true
+        },
+        {
+          "iteration": 5,
+          "measurement_order": 2,
+          "snapshot_ms": 4.532875,
+          "rollback_ms": 8.099122,
+          "snapshot_plus_rollback_ms": 12.631996999999998,
+          "restoration_verified": true
+        }
+      ],
+      "snapshot_ms": {
+        "p50": 3.820358,
+        "p95": 4.4048052,
+        "min": 3.269144,
+        "max": 4.532875
+      },
+      "rollback_ms": {
+        "p50": 4.017596,
+        "p95": 7.586808199999999,
+        "min": 3.516266,
+        "max": 8.099122
+      },
+      "snapshot_plus_rollback_ms": {
+        "p50": 7.769968,
+        "p95": 11.991613399999999,
+        "min": 6.78541,
+        "max": 12.631996999999998
+      },
+      "storage": {
+        "snapshot_count": 5,
+        "logical_file_bytes": 2048000
+      }
+    }
+  },
+  "all_restorations_verified": true
+}
